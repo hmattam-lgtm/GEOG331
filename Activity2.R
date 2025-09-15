@@ -23,5 +23,11 @@ Mat.bycol[1,]
 #look at all values in column 2
 Mat.bycol[,2]
 
-#datW <- read.csv("Z:/GEOG331_S22/data/noaa_weather/2011124.csv",
-                 stringsAsFactors = T)
+datW <- read.csv("Z:\\hmattam\\GitHub\\GEOG331\\data\\noaa_weather\\2011124.csv", stringsAsFactors = T)
+str(datW)
+datW$dateF <- as.Date(datW$DATE, "%Y-%m-%d")
+datW$year <- as.numeric(format(datW$dateF,"%Y"))
+test <- factor(c("midterm", "final", "midterm", "midterm", "final"))
+colors <- c("maroon", "skyblue", "yellow", "lightgreen", "magenta", "pink", "violet")
+exam_scores <- c(98.5,77.68,85.9,92.3,96.6)
+class_size <- as.integer(c(25,27,33,35,31))
