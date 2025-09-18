@@ -174,3 +174,45 @@ points(x.plot,
        col = "royalblue3",
        lwd = 4, 
        lty = 2)
+
+#pnorm(value to evaluate at (note this will evaluate for all values and below),mean, standard deviation)
+pnorm(0,
+      mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+#pnrom with 5 gives me all probability (area of the curve) below 5 
+pnorm(5,
+      mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+
+#pnrom with 5 gives me all probability (area of the curve) below 5 
+pnorm(5,
+      mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))- pnorm(0,
+                                                        mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+                                                        sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+#pnorm of 20 gives me all probability (area of the curve) below 20 
+#subtracting from one leaves me with the area above 20
+1 - pnorm(20,
+          mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+          sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+#pnorm of 20 gives me all probability (area of the curve) below 20 
+#subtracting from one leaves me with the area above 20
+qnorm(0.95,
+      mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+datW$PRCPAVE <- mean(datW$PRCP[datW$NAME == "ABERDEEN, WA US"], na.rm=TRUE)
+1 - pnorm(18.51,
+          mean(datW$TAVE[datW$siteN == 1]+4,na.rm=TRUE),
+          sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+
+
+datW$siteN <- as.numeric(datW$NAME)
+hist(datW$PRCP[datW$siteN == 1],
+     freq=FALSE, 
+     main = paste(levels(datW$NAME)[1]),
+     xlab = "Average Percipitation (inches)", 
+     ylab="Relative frequency",
+     col="violet",
+     border="white")
+
+yearPrcp <- aggregate(datW$PRCP, by=list(datW$NAME, datW$year), FUN="sum",na.rm=TRUE)
