@@ -200,19 +200,42 @@ pnorm(5,
 qnorm(0.95,
       mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
       sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
-datW$PRCPAVE <- mean(datW$PRCP[datW$NAME == "ABERDEEN, WA US"], na.rm=TRUE)
+
+#for the change in mean
 1 - pnorm(18.51,
           mean(datW$TAVE[datW$siteN == 1]+4,na.rm=TRUE),
           sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
 
-
+#histogram of the average rainfall of just Aberdeen
 datW$siteN <- as.numeric(datW$NAME)
 hist(datW$PRCP[datW$siteN == 1],
      freq=FALSE, 
      main = paste(levels(datW$NAME)[1]),
-     xlab = "Average Percipitation (inches)", 
+     xlab = "Average Percipitation (mm)", 
      ylab="Relative frequency",
      col="violet",
      border="white")
 
+#makes an object of all the names of the places and the year and its sum of rain
+#Need site name to differentiate where we want to look, year to show 
+#each data point, and prcp to be actual data
 yearPrcp <- aggregate(datW$PRCP, by=list(datW$NAME, datW$year), FUN="sum",na.rm=TRUE)
+#makes column names readable
+colnames(yearPrcp) <- c("NAME","Year","Percipitation")
+
+#vatiable to switch between sites easily
+s <- 2
+#Histograph of data from the object that we made looking at prcp
+#when the name is what we specify
+hist(yearPrcp$Percipitation[yearPrcp$NAME == levels(datW$NAME)[s]],
+     freq=FALSE, 
+     main = paste(levels(datW$NAME)[s]),
+     xlab = "Annual Percipitation (mm)", 
+     ylab="Relative frequency",
+     col="black",
+     border="white")
+mean(yearPrcp$Percipitation[yearPrcp$NAME == "ABERDEEN, WA US"],na.rm=TRUE)
+mean(yearPrcp$Percipitation[yearPrcp$NAME == "LIVERMORE, CA US"],na.rm=TRUE)
+mean(yearPrcp$Percipitation[yearPrcp$NAME == "MANDAN EXPERIMENT STATION, ND US"],na.rm=TRUE)
+mean(yearPrcp$Percipitation[yearPrcp$NAME == "MORMON FLAT, AZ US"],na.rm=TRUE)
+mean(yearPrcp$Percipitation[yearPrcp$NAME == "MORRISVILLE 6 SW, NY US"],na.rm=TRUE)
