@@ -83,7 +83,21 @@ datW[datW$air.tempQ1 < 8,]
 #look at days with really high air temperature
 datW[datW$air.tempQ1 > 33,] 
 
+#plot precipitation and lightning strikes on the same plot
+#normalize lighting strikes to match precipitation
+lightscale <- (max(datW$precipitation)/max(datW$lightning.acvitivy)) * datW$lightning.acvitivy
+#make the plot with precipitation and lightning activity marked
+#make it empty to start and add in features
+plot(datW$DD , datW$precipitation, xlab = "Day of Year", ylab = "Precipitation & lightning",
+     type="n")
+#plot precipitation points only when there is precipitation 
+#make the points semi-transparent
+points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
 
+#plot lightning points only when there is lightning     
+points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
+       col= "tomato3", pch=19)
 
 
 
