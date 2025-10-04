@@ -99,8 +99,46 @@ points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 
 points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
        col= "tomato3", pch=19)
 
+################################################
+##########         Question 5         ########## 
+################################################
+
+#shows that there is info for every data point in datW, it is just
+#a subset of this data interpreting something else not in the set
+assert(length(lightscale) == length(datW$DD), "error: unequal values")
+
+################################################
+################################################
+
+#create a new air temp column
+datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
+                          ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
 
 
+################################################
+##########         Question 6         ########## 
+################################################
+
+datW$wind.speed2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
+                          ifelse(datW$precipitation > 5, NA, datW$wind.speed))
+
+
+#returns true only if all the values are null in the same in both columns
+#use all because without that it was trying to check every row and that gave error
+#all reduces it to one true or false statement
+assert(all(is.na(datW$air.tempQ2) == is.na(datW$wind.speed2)), "error: unequal values")
+
+################################################
+################################################
+
+################################################
+##########         Question 7         ########## 
+################################################
+
+
+
+################################################
+################################################
 
 
 
