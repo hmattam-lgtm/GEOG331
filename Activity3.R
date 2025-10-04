@@ -41,6 +41,20 @@ datW$hour <- hour(dates) + (minute(dates)/60)
 #calculate decimal day of year
 datW$DD <- datW$doy + (datW$hour/24)
 
+#normalize lighting strikes to match precipitation
+lightscale <- (max(datW$precipitation)/max(datW$lightning.acvitivy)) * datW$lightning.acvitivy
+#make the plot with precipitation and lightning activity marked
+#make it empty to start and add in features
+plot(datW$DD , datW$precipitation, xlab = "Day of Year", ylab = "Precipitation & lightning",
+     type="n")
+#plot precipitation points only when there is precipitation 
+#make the points semi-transparent
+points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plot lightning points only when there is lightning     
+points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
+       col= "tomato3", pch=19)
 
 ################################################
 ##########         Question 5         ########## 
@@ -54,6 +68,7 @@ assert(length(lightscale) == length(datW$DD), "error: unequal values")
 ################################################
 
 #create a new air temp column
+datW$air.tempQ1 <- ifelse(datW$air.temperature < 0, NA, datW$air.temperature)
 datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
                           ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
 
@@ -148,6 +163,7 @@ table <- data.frame(titles = c("Air Temp", "Wind Speed", "Soil Temp",
   Observations = c(temptot,totwindspeed,totsoiltemp,totsoilmoist,totPercip)
 )
 print(paste("Time Period:", start_date, "to", end_date))
+table
 
 
 
