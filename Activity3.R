@@ -135,7 +135,47 @@ assert(all(is.na(datW$air.tempQ2) == is.na(datW$wind.speed2)), "error: unequal v
 ##########         Question 7         ########## 
 ################################################
 
+## precipitation vs soil moisture
 
+#scale soil moisture to precipitation
+soilscale <- (max(datW$precipitation)/max(datW$soil.moisture, na.rm = TRUE)) * datW$soil.moisture
+
+#where soil moisture is not NA
+soilValid <- !is.na(soilscale)
+
+#empty graph for data up to date of outage
+plot(datW$DD[soilValid] , datW$precipitation[soilValid], xlab = "Day of Year", ylab = "Precipitation & Soil Moisture",
+     type="n")
+
+#plots the precipitation that is not zero on graph in blue
+points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plots soil moisture levels in red
+points(datW$DD[soilValid], soilscale[soilValid],
+       col= "tomato3", pch=19)
+
+
+##soil temp vs air temp
+
+#scale soil temp to air temp
+tempscale <- (max(datW$air.temperature)/max(datW$soil.temp, na.rm = TRUE)) * datW$soil.temp
+
+#where soil temp is not NA
+soiltempValid <- !is.na(tempscale)
+
+#empty graph for data up to date of outage
+plot(datW$DD[soiltempValid] , datW$air.temperature[soiltempValid], xlab = "Day of Year", ylab = "Air temp & Soil temp",
+     type="n")
+
+#plots the air temp on graph in blue
+points(datW$DD[soiltempValid], datW$air.temperature[soiltempValid],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+
+#plots soil temp in red
+points(datW$DD[soiltempValid], tempscale[soiltempValid],
+       col= "tomato3", pch=19)
 
 ################################################
 ################################################
