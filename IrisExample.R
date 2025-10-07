@@ -7,6 +7,7 @@ flower <- iris[iris$Species == "virginica",]
 plot(flower$Sepal.Length, flower$Petal.Length, pch=19,
      xlab = "Sepal length", ylab = "Petal length",
      main = "Iris virginica")
+abline(a = 0.61, b=0.75)
 
 #fit a regression model
 fit <- lm(flower$Petal.Length ~ flower$Sepal.Length) #fit a linear model
