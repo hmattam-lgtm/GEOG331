@@ -1,5 +1,7 @@
 #load in lubridate
 library(lubridate)
+library(dplyr)
+library(ggplot2)
 #read in streamflow data
 datH <- read.csv("Z:\\hmattam\\Data\\hw5_data\\stream_flow_data.csv",
                  na.strings = c("Eqp"))
@@ -76,112 +78,128 @@ colnames(sdF) <- c("doy","dailySD")
 #start new plot
 dev.new(width=8,height=8)
 
-#bigger margins
+####################################################
+
+####################################################
+###########          Question 5          ###########
+####################################################
 par(mai=c(1,1,1,1))
 #make plot
+
+#### subset of just 2017
+year_2017 <- subset(datD, year == 2017)
+
+###getting the daily average of the discharge data
+#yrD <- aggregate(year_2017$discharge, by=list(year_2017$doy), FUN="mean", na.rm = "TRUE")
+#colnames(yrD) <- c("doy","dailyAve") ##changing data labels
+
 plot(aveF$doy,aveF$dailyAve, 
      type="l", 
-     xlab="Year", 
-     ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
-     lwd=2)
-
-
-#####polygon to show standard deviation
-#bigger margins
-par(mai=c(1,1,1,1))
-#make plot
-plot(aveF$doy,aveF$dailyAve, 
-     type="l", 
-     xlab="Year", 
+     xlab="Month", 
      ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
      lwd=2,
-     ylim=c(0,90),
-     xaxs="i", yaxs ="i")#remove gaps from axes  
-#show standard deviation around the mean
+     ylim=c(0,190),
+     xaxs="i", yaxs ="i",#remove gaps from axes
+     axes=FALSE)#no axes
 polygon(c(aveF$doy, rev(aveF$doy)),#x coordinates
         c(aveF$dailyAve-sdF$dailySD,rev(aveF$dailyAve+sdF$dailySD)),#ycoord
         col=rgb(0.392, 0.584, 0.929,.2), #color that is semi-transparent
-        border=NA#no border
+        border="NA" #no border
 )
+lines(year_2017$doy,year_2017$discharge, col = "red", lwd = 2)
 
+##last day of month for tick interval
+custom_ticks <- c(0,31,59,90,120,151,181,212,243,273,304,334,365)
 
-####adjust axis
-#bigger margins
-par(mai=c(1,1,1,1))
-#make plot
-plot(aveF$doy,aveF$dailyAve, 
-     type="l", 
-     xlab="Year", 
-     ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
-     lwd=2,
-     ylim=c(0,90),
-     xaxs="i", yaxs ="i",#remove gaps from axes
-     axes=FALSE)#no axes
-polygon(c(aveF$doy, rev(aveF$doy)),#x coordinates
-        c(aveF$dailyAve-sdF$dailySD,rev(aveF$dailyAve+sdF$dailySD)),#ycoord
-        col=rgb(0.392, 0.584, 0.929,.2), #color that is semi-transparent
-        border=NA#no border
-)       
-axis(1, seq(0,360, by=40), #tick intervals
-     lab=seq(0,360, by=40)) #tick labels
-axis(2, seq(0,80, by=20),
-     seq(0,80, by=20),
+#month labels
+months<- c("0", "Jan", "Feb", "March", "April", "May", "June", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" )
+
+axis(1, at = custom_ticks, #tick intervals
+     labels = months) #tick labels
+axis(2, seq(0,190, by=20),
+     seq(0,190, by=20),
      las = 2)#show ticks at 90 degree angle
-
-
-#####add legend
-#bigger margins
-par(mai=c(1,1,1,1))
-#make plot
-plot(aveF$doy,aveF$dailyAve, 
-     type="l", 
-     xlab="Year", 
-     ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
-     lwd=2,
-     ylim=c(0,90),
-     xaxs="i", yaxs ="i",#remove gaps from axes
-     axes=FALSE)#no axes
-polygon(c(aveF$doy, rev(aveF$doy)),#x coordinates
-        c(aveF$dailyAve-sdF$dailySD,rev(aveF$dailyAve+sdF$dailySD)),#ycoord
-        col=rgb(0.392, 0.584, 0.929,.2), #color that is semi-transparent
-        border=NA#no border
-)       
-axis(1, seq(0,360, by=40), #tick intervals
-     lab=seq(0,360, by=40)) #tick labels
-axis(2, seq(0,80, by=20),
-     seq(0,80, by=20),
-     las = 2)#show ticks at 90 degree angle
-legend("topright", c("mean","1 standard deviation"), #legend items
-       lwd=c(2,NA),#lines
-       fill=c(NA,rgb(0.392, 0.584, 0.929,.2)),#fill boxes
-       border=NA,#no border for both fill boxes (don't need a vector here since both are the same)
-       bty="n")#no legend border
-
-####make sure everything lines up in legend
-#bigger margins
-par(mai=c(1,1,1,1))
-#make plot
-plot(aveF$doy,aveF$dailyAve, 
-     type="l", 
-     xlab="Year", 
-     ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
-     lwd=2,
-     ylim=c(0,90),
-     xaxs="i", yaxs ="i",#remove gaps from axes
-     axes=FALSE)#no axes
-polygon(c(aveF$doy, rev(aveF$doy)),#x coordinates
-        c(aveF$dailyAve-sdF$dailySD,rev(aveF$dailyAve+sdF$dailySD)),#ycoord
-        col=rgb(0.392, 0.584, 0.929,.2), #color that is semi-transparent
-        border=NA#no border
-)       
-axis(1, seq(0,360, by=40), #tick intervals
-     lab=seq(0,360, by=40)) #tick labels
-axis(2, seq(0,80, by=20),
-     seq(0,80, by=20),
-     las = 2)#show ticks at 90 degree angle
-legend("topright", c("mean","1 standard deviation"), #legend items
-       lwd=c(2,NA),#lines
-       col=c("black",rgb(0.392, 0.584, 0.929,.2)),#colors
+legend("topright", c("mean","1 standard deviation", "discharge 2017"), #legend items
+       lwd=c(2,NA,2),#lines
+       col=c("black",rgb(0.392, 0.584, 0.929,.2), "red"),#colors
        pch=c(NA,15),#symbols
        bty="n")#no legend border
+############################################################################
 
+####################################################
+###########          Question 7          ###########
+####################################################
+p_count <- aggregate(datP$HPCP, by=list(datP$year, datP$doy), FUN = "length")
+colnames(p_count) <-c("year", "doy", "length")
+## Adds a col where if the length is 24 then true nd false if not
+p_count$complete <- ifelse(p_count$length == 24, TRUE, FALSE)
+##merges the discharge data by matching year and doy
+p_count <- merge(p_count, datD[,c("year", "doy", "discharge")],
+                  by= c("year", "doy"), all.x = TRUE)
+##gets individual dates to label so we can plot by day not year or doy
+p_count$date <- as.Date(paste(p_count$year, p_count$doy), format = "%Y %j")
+
+ggplot(data = p_count, mapping = aes(x = date, y = discharge, color = complete)) + 
+  geom_point() + 
+  theme_classic() + 
+  labs(x="Date", y = "Discharge", title = "Comeplete Discharge Data")
+
+####################################################
+###########          Question 8          ###########
+####################################################
+
+#subset discharge and precipitation within range of interest
+hydroD2 <- datD[datD$doy >= 13 & datD$doy < 14 & datD$year == 2012,]
+hydroP2 <- datP[datP$doy >= 13 & datP$doy < 14 & datP$year == 2012,]
+
+#get minimum and maximum range of discharge to plot
+#go outside of the range so that it's easy to see high/low values
+#floor rounds down the integer
+yl2 <- floor(min(hydroD2$discharge))-1
+#ceiling rounds up to the integer
+yh2 <- ceiling(max(hydroD2$discharge))+1
+#minimum and maximum range of precipitation to plot
+pl2 <- 0
+pm2 <-  ceiling(max(hydroP2$HPCP))+.5
+#scale precipitation to fit on the 
+hydroP2$pscale <- (((yh2-yl2)/(pm2-pl2)) * hydroP2$HPCP) + yl2
+
+par(mai=c(1,1,1,1))
+#make plot of discharge
+plot(hydroD2$decDay,
+     hydroD2$discharge, 
+     type="l", 
+     ylim=c(yl2,yh2), 
+     lwd=2,
+     xlab="Day of year", 
+     ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")))
+#add bars to indicate precipitation 
+for(i in 1:nrow(hydroP2)){
+  polygon(c(hydroP2$decDay[i]-0.017,hydroP2$decDay[i]-0.017,
+            hydroP2$decDay[i]+0.017,hydroP2$decDay[i]+0.017),
+          c(yl2,hydroP2$pscale[i],hydroP2$pscale[i],yl2),
+          col=rgb(0.392, 0.584, 0.929,.2), border=NA)
+}
+
+####################################################
+###########          Question 9          ###########
+####################################################
+
+
+#take just 2016 and 17 data
+years16_17 <- datD[datD$year == 2016 | datD$year == 2017,]
+
+#make a col for season
+years16_17$season <- NA
+
+#use doy to assign seasons to each day
+years16_17$season[years16_17$doy >= 60 & years16_17$doy <= 151] <- "Spring"
+years16_17$season[years16_17$doy >= 152 & years16_17$doy <= 243] <- "Summer"
+years16_17$season[years16_17$doy >= 244 & years16_17$doy <= 334] <- "Fall"
+##everything w/o season is winter
+years16_17$season[is.na(years16_17$season)] <- "Winter"
+
+ggplot(data= years16_17, aes(season,discharge, color = as.factor(year))) + 
+  geom_violin() + 
+  labs(x = "Season", y = "Discharge", fill = "Year",
+                       title = "Discharge by Season for 2016 and 2017")
