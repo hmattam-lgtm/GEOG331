@@ -188,6 +188,7 @@ for(i in 1:nrow(hydroP2)){
 
 #take just 2016 and 17 data
 years16_17 <- datD[datD$year == 2016 | datD$year == 2017,]
+years16_17$Year <- as.factor(years16_17$year)
 
 #make a col for season
 years16_17$season <- NA
@@ -198,8 +199,9 @@ years16_17$season[years16_17$doy >= 152 & years16_17$doy <= 243] <- "Summer"
 years16_17$season[years16_17$doy >= 244 & years16_17$doy <= 334] <- "Fall"
 ##everything w/o season is winter
 years16_17$season[is.na(years16_17$season)] <- "Winter"
+years16_17$season <- factor(years16_17$season, levels = c("Winter", "Spring", "Summer", "Fall"))
 
-ggplot(data= years16_17, aes(season,discharge, color = as.factor(year))) + 
+ggplot(data= years16_17, aes(season,discharge, color = Year)) + 
   geom_violin() + 
-  labs(x = "Season", y = "Discharge", fill = "Year",
+  labs(x = "Season", y = expression(paste("Discharge ft"^"3 ","sec"^"-1")), fill = "Year",
                        title = "Discharge by Season for 2016 and 2017")
