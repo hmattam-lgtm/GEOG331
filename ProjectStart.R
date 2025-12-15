@@ -106,6 +106,7 @@ folder_path <- "Z:\\hmattam\\Data\\ModisData"
 # List HDF files 
 hdf_files <- list.files(folder_path, pattern = "\\.hdf$", full.names = TRUE) 
 
+
 #create function toget the ndvi data from each file and then find mean
 get_ndvi_info <- function(file) { 
   sds <- gdal_subdatasets(file) 
@@ -137,3 +138,58 @@ ggplot(ndvi_yearly, aes(x = year, y = mean_ndvi)) +
   labs(title = "NDVI Trends (April 15–30) in California", 
        x = "Year", y = "Mean NDVI") + 
   theme_minimal()
+
+#create a new year col with it as numeric
+fire_yearly <- year_freq_df %>%
+  mutate(Year = as.numeric(Year))
+
+#change it to same as PDSI
+fire_yearly$Year <- 2000:(2000 + nrow(fire_yearly) - 1)
+
+#combine data
+fire_pdsi <- fire_yearly %>%
+  left_join(state_annual, by = "Year")
+#remove NA
+fire_pdsi_clean <- fire_pdsi %>%
+  filter(!is.na(Frequency), !is.na(Avg_PDSI))
+
+#plot relationship between wildfires and PDI
+plot(fire_pdsi_clean$Avg_PDSI, fire_pdsi_clean$Frequency,
+     pch = 19,
+     xlab = "Average Annual PDSI",
+     ylab = "Number of Wildfires",
+     main = "Wildfire Frequency vs Drought Severity in California")
+fit <- lm(Frequency ~ Avg_PDSI, data = fire_pdsi_clean)
+abline(fit, col = "red", lwd = 2)
+
+#plot residuals
+plot(
+  fire_pdsi_clean$Avg_PDSI,
+  residuals(fit),
+  pch = 19,
+  xlab = "Average Annual PDSI",
+  ylab = "Residuals",
+  main = "Residuals of Fire–PDSI Regression"
+)
+abline(h = 0, col = "red")
+
+##all three data sets
+#create combined data frame with all relevant values
+combined_df <- fire_yearly %>%
+  left_join(state_annual, by = "Year") %>%
+  left_join(ndvi_yearly, by = c("Year" = "year")) %>%
+  filter(!is.na(Frequency), !is.na(Avg_PDSI), !is.na(mean_ndvi))
+
+#plot the three on one graph
+ggplot(combined_df, aes(x = Year)) +
+  geom_line(aes(y = Frequency, color = "Wildfires"), size = 1) +
+  geom_line(aes(y = Avg_PDSI * 100, color = "PDSI (scaled)"), size = 1) +
+  geom_line(aes(y = mean_ndvi * 1000, color = "NDVI (scaled)"), size = 1) +
+  theme_minimal() +
+  labs(
+    title = "Wildfires, Drought, and Vegetation in California",
+    y = "Relative Values (scaled)",
+    color = "Variable"
+  )
+
+
